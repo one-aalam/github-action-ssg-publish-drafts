@@ -1,4 +1,4 @@
-name: 'Astro + SSG Publish Drafts'
+name: 'SSG Publish Drafts'
 description: 'Publish drafts with a date greater than the current time'
 author: 'one-aalam'
 branding:
