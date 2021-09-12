@@ -1,11 +1,28 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Astro Publish Drafts'
+description: 'Publish drafts with a date greater than the current time'
+author: 'one-aalam'
+branding:
+  icon: 'calendar'
+  color: 'purple'
 inputs:
-  milliseconds: # change this
+  github_token:
+    description: 'Token for the repo. Can be passed in using $\{{ secrets.GITHUB_TOKEN }}'
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  github_actor:
+    description: 'The Github actor to use'
+    required: true
+  github_repository:
+    description: 'Repository name to push. Default or empty value represents current github repository (${GITHUB_REPOSITORY})'
+    default: ''
+    required: false
+  branch:
+    description: 'Destination branch to push changes'
+    required: false
+    default: 'main'
+  astro_path:
+    description: 'Directory containing the jekyll root folder.'
+    required: false
+    default: '.'
 runs:
   using: 'node12'
   main: 'dist/index.js'
