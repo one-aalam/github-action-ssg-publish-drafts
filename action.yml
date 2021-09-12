@@ -1,9 +1,9 @@
-name: Astro Publish Drafts
+name: 'Astro + SSG Publish Drafts'
 description: 'Publish drafts with a date greater than the current time'
 author: 'one-aalam'
 branding:
-  icon: calendar
-  color: purple
+  icon: 'calendar'
+  color: 'purple'
 inputs:
   github_token:
     description: 'Token for the repo. Can be passed in using $\{{ secrets.GITHUB_TOKEN }}'
