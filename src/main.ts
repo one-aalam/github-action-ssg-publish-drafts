@@ -9,6 +9,10 @@ import { exec } from '@actions/exec'
 async function run(): Promise<void> {
   try {
     const astroPath = core.getInput('astroPath') || '.'
+    const astroSrcDir = path.join(astroPath, 'src')
+    const astroDraftsDir = path.join(astroSrcDir, 'drafts')
+
+
     core.debug(`Starting the scan for future posts...`)
     const now = new Date();
     let draftCount = 0;
@@ -21,12 +25,13 @@ async function run(): Promise<void> {
     const gitMessage = core.getInput('git_message') || 'Publish Drafts'
 
     core.debug(`Started the scan at ${now}`)
+    core.debug(`Scanning all the files available in ${astroDraftsDir}`)
 
-    const patterns = [path.join(astroPath, 'src', 'drafts', '*.md')]
+    const patterns = [path.join(astroDraftsDir, '**', '*.md')]
     const globber = await glob.create(patterns.join('\n'), { followSymbolicLinks: false })
     for await (const file of globber.globGenerator()) {
         draftCount += 1
-        console.log(file)
+        core.debug(file)
     }
 
     if (githubActor) {
