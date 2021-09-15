@@ -114,7 +114,7 @@ function run() {
             }
             core.warning(`Found ${fileCount} files. Moved drafts: ${draftCount}`);
             if (draftCount > 0) {
-                const remote_repo = `https://${githubActor}:${githubToken}@github.com/${githubRepository}.git`;
+                const remote_repo = `https://${githubActor}:${githubToken}@github.com/${gitUsername}/${githubRepository}.git`;
                 yield exec_1.exec('git', ['commit', '-m', gitMessage]);
                 yield exec_1.exec('git', ['push', remote_repo, `HEAD:${branch}`, '--follow-tags', '--force']);
             }
