@@ -51,9 +51,9 @@ async function run(): Promise<void> {
                 if (rdate.getFullYear() >= 2000) {
                     if (now.getTime() >= rdate.getTime()) {
                         core.debug(`Gonna publish ${file} to the "/pages/posts" directory`)
-                        const newFile = `${astroSrcDir}/pages/posts/${basename}`;
+                        const newFile = path.resolve(astroSrcDir, 'pages', 'posts', basename)
                         core.warning(`${file} --> ${newFile}`);
-                        await exec('git', ['mv', file, newFile]);
+                        await exec('git', ['mv', file , newFile]);
                         draftCount += 1
                     } else {
                         core.debug(`Skipped ${file}. It doesn't seems to be a future post.`)

@@ -93,7 +93,7 @@ function run() {
                         if (rdate.getFullYear() >= 2000) {
                             if (now.getTime() >= rdate.getTime()) {
                                 core.debug(`Gonna publish ${file} to the "/pages/posts" directory`);
-                                const newFile = `${astroSrcDir}/pages/posts/${basename}`;
+                                const newFile = path_1.default.resolve(astroSrcDir, 'pages', 'posts', basename);
                                 core.warning(`${file} --> ${newFile}`);
                                 yield exec_1.exec('git', ['mv', file, newFile]);
                                 draftCount += 1;
