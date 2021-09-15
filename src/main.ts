@@ -27,7 +27,7 @@ async function run(): Promise<void> {
     core.debug(`Started the scan at ${now}`)
     core.debug(`Scanning all the files available in ${astroDraftsDir}`)
 
-    const patterns = [path.join(astroDraftsDir, '**', '*.md')]
+    const patterns = [path.join(astroDraftsDir, '*.md')]
     const globber = await glob.create(patterns.join('\n'), { followSymbolicLinks: false })
     for await (const file of globber.globGenerator()) {
         draftCount += 1
