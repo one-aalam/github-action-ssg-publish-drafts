@@ -57,9 +57,7 @@ function run() {
     var _b;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const astroPath = core.getInput('astroPath') || '.';
-            const astroSrcDir = path_1.default.join(astroPath, 'src');
-            const astroDraftsDir = path_1.default.join(astroSrcDir, 'drafts');
+            const sitePath = core.getInput('site_path') || '.';
             core.debug(`Starting the scan for future posts...`);
             const now = new Date();
             let draftCount = 0;
@@ -71,13 +69,15 @@ function run() {
             const gitUsername = core.getInput('git_username') || 'github-actions[bot]';
             const gitEmail = core.getInput('git_email') || '41898282+github-actions[bot]@users.noreply.github.com';
             const gitMessage = core.getInput('git_message') || 'Publish Drafts';
+            const siteDraftsDir = path_1.default.join(sitePath, core.getInput('site_drafts_dir') || 'src/drafts');
+            const sitePublishedDir = path_1.default.join(sitePath, core.getInput('site_published_dir') || 'src/pages/blog');
             core.debug(`Started the scan at ${now}`);
-            core.debug(`Scanning all the files available in ${astroDraftsDir}`);
+            core.debug(`Scanning all the files available in ${siteDraftsDir}`);
             if (githubActor) {
                 yield exec_1.exec('git', ['config', '--global', 'user.email', gitEmail]);
                 yield exec_1.exec('git', ['config', '--global', 'user.name', gitUsername]);
             }
-            const patterns = [path_1.default.join(astroDraftsDir, '*.md')];
+            const patterns = [path_1.default.join(siteDraftsDir, '*.md')];
             const globber = yield glob.create(patterns.join('\n'), { followSymbolicLinks: false });
             try {
                 for (var _c = __asyncValues(globber.globGenerator()), _d; _d = yield _c.next(), !_d.done;) {
@@ -92,8 +92,8 @@ function run() {
                         const rdate = new Date(Date.parse(filePubDate));
                         if (rdate.getFullYear() >= 2000) {
                             if (now.getTime() >= rdate.getTime()) {
-                                core.debug(`Gonna publish ${file} to the "/pages/posts" directory`);
-                                const newFile = path_1.default.resolve(astroSrcDir, 'pages', 'posts', basename);
+                                core.debug(`Gonna publish ${file} to the ${sitePublishedDir} directory`);
+                                const newFile = path_1.default.resolve(sitePublishedDir, basename);
                                 core.warning(`${file} --> ${newFile}`);
                                 yield exec_1.exec('git', ['mv', file, newFile]);
                                 draftCount += 1;
@@ -114,7 +114,7 @@ function run() {
             }
             core.warning(`Found ${fileCount} files. Moved drafts: ${draftCount}`);
             if (draftCount > 0) {
-                const remote_repo = `https://${githubActor}:${githubToken}@github.com/${gitUsername}/${githubRepository}.git`;
+                const remote_repo = `https://${githubActor}:${githubToken}@github.com/${githubRepository}.git`;
                 yield exec_1.exec('git', ['commit', '-m', gitMessage]);
                 yield exec_1.exec('git', ['push', remote_repo, `HEAD:${branch}`, '--follow-tags', '--force']);
             }

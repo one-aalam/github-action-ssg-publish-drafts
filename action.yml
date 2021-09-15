@@ -19,10 +19,18 @@ inputs:
     description: 'Destination branch to push changes'
     required: false
     default: 'main'
-  astro_path:
-    description: 'Directory containing the jekyll root folder.'
+  site_path:
+    description: 'Directory containing the SSG root folder.'
     required: false
     default: '.'
+  site_drafts_dir:
+    description: 'Directory containing all the drafts in *.md format.'
+    required: false
+    default: 'src/drafts'
+  site_published_dir:
+    description: 'Directory to contain all the published content in *.md format.'
+    required: false
+    default: 'src/pages/blog'
 runs:
   using: 'node12'
   main: 'dist/index.js'
