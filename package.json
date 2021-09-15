@@ -1,6 +1,6 @@
 {
-  "name": "github-action-astro-publish-drafts",
-  "version": "0.0.0",
+  "name": "github-action-ssg-publish-drafts",
+  "version": "0.0.1",
   "private": true,
   "description": "Publish Draft Posts",
   "main": "lib/main.js",
