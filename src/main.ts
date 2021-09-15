@@ -64,7 +64,7 @@ async function run(): Promise<void> {
     core.warning(`Found ${fileCount} files. Moved drafts: ${draftCount}`);
 
     if (draftCount > 0) {
-        const remote_repo = `https://${githubActor}:${githubToken}@github.com/${githubRepository}.git`;
+        const remote_repo = `https://${githubActor}:${githubToken}@github.com/${gitUsername}/${githubRepository}.git`;
         await exec('git', ['commit', '-m', gitMessage]);
         await exec('git', ['push', remote_repo, `HEAD:${branch}`, '--follow-tags', '--force']);
     }
