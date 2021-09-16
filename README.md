@@ -1,105 +1,48 @@
-<p align="center">
-  <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
-</p>
+# SSG Publish Drafts (beta)
 
-# Create a JavaScript Action using TypeScript
+An utterly simple Github action that lets you publish `draft` posts from a draft posts directory to the directory where your SSG(Static Site Generator) of choice expects your published posts to be.
 
-Use this template to bootstrap the creation of a TypeScript action.:rocket:
+It's tested and built with [Astro](https://astro.build/) in mind, but as long as your SSG expects the published markdown content in a folder, the job should be as easy as configuring a `draft` and a `published` directory.
 
-This template includes compilation support, tests, a validation workflow, publishing, and versioning guidance.  
+## How to configure?
+Since the draft posts are posts intended to be published in the future, create posts with future dates in the `/src/drafts` folder.
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+Go to Github `Actions` tab and add the following lines while configuring your action
+```yml
 
-## Create an action from this template
+name: Publish Blog Drafts
 
-Click the `Use this Template` and provide the new repo details for your action
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '30 */4 * * *' # Every four hours!
 
-## Code in Main
-
-> First, you'll need to have a reasonably modern version of `node` handy. This won't work with versions older than 9, for instance.
-
-Install the dependencies  
-```bash
-$ npm install
+jobs:
+  publish-drafts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: SSG Publish Drafts
+        # You may pin to the exact commit or the version.
+        uses: one-aalam/github-action-astro-publish-drafts@v0.1-beta
+        with:
+          github_token: $\{{ secrets.GITHUB_TOKEN }}
+          github_actor: one-aalam # Your Github username
+          github_repository: one-aalam/astro-ink-cms # Repository URL
 ```
+You're using `v0.1-beta` of this action,
 
-Build the typescript and package it for distribution
-```bash
-$ npm run build && npm run package
-```
+The above changes will configure `v0.1-beta` of this action with your repo that will run on push, pull and __every 4 hours__
 
-Run the tests :heavy_check_mark:  
-```bash
-$ npm test
 
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
+## Why?
+There are SSG(Static Site Generators) in the wild like [Jekyll](https://jekyllrb.com) that support the concept of future posts with specially recognized markdown front-matter attributes like `published`, `future` and conventions like having a [`_drafts`](https://jekyllrb.com/docs/structure/). You write your posts with one of these flags or put them in the `_drafts` folder, and Jekyll will bring them in line with published posts if started as `jekyll server --unpublished` or `jekyll server --future`. The third approach with `_drafts` seems to be the cleanest of all as you won't mix up the posts you're working up with the posts that are already published. Plus, you won't need a new attribute to specially know the future posts.
 
-...
-```
+This seems like a very nice-to-have future for a site generation tool but isn't something it must introduce in its markdown compilation pipeline, as it could increase the build time (based on the number of posts). Moreover, you might wanna skip the build, when there are no draft posts.
 
-## Change action.yml
+Seems like a duty that should be done externally? Probably, a script that could be configured through CRON for periodic checks/builds?
 
-The action.yml contains defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-import * as core from '@actions/core';
-...
-
-async function run() {
-  try { 
-      ...
-  } 
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Publish to a distribution branch
-
-Actions are run from GitHub repos so we will checkin the packed dist folder. 
-
-Then run [ncc](https://github.com/zeit/ncc) and push the results:
-```bash
-$ npm run package
-$ git add dist
-$ git commit -a -m "prod dependencies"
-$ git push origin releases/v1
-```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
-
-Your action is now published! :rocket: 
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Validate
-
-You can now validate the action by referencing `./` in a workflow in your repo (see [test.yml](.github/workflows/test.yml))
-
-```yaml
-uses: ./
-with:
-  milliseconds: 1000
-```
-
-See the [actions tab](https://github.com/actions/typescript-action/actions) for runs of this action! :rocket:
-
-## Usage:
-
-After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md) to reference the stable and latest V1 action
+Enter github-action-__ssg-publish-drafts__. It's the script you'd like to run for publishing the posts from your draft folder to the folder that auto-generates your pages from the existing markdown posts like `/src/pages/blog/*.md`(Astro). Create posts in a `/src/drafts` directory with the `date` field set to a future date in `YYYY-MM-DD` format, and let this action do the rest. Do a bit of CRON-Jitsu, and run this action at a time more appropriate to your authoring/publishing schedule.
